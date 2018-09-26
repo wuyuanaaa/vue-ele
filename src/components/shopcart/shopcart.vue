@@ -205,8 +205,6 @@ export default {
     empty () {
       this.selectFoods.forEach((food) => {
         food.count = 0;
-        // 重置收起
-        this.fold = true;
       });
     },
     hideList () {
@@ -218,6 +216,11 @@ export default {
       }
       window.alert(`支付${this.totalPrice}元`);
       this.empty();
+    }
+  },
+  updated () {
+    if (!this.totalCount) {
+      this.fold = true;
     }
   },
   components: {
