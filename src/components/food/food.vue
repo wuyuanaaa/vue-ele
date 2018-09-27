@@ -39,15 +39,18 @@
           <div class="rating">
             <h3 class="title">商品评价</h3>
             <ratingselect
-              ref="ratingselect"
+              :select-type="selectType"
+              :only-content="onlyContent"
               :desc="desc"
               :ratings="food.ratings"
+              @changeType="changeType"
+              @changeOnlyContent="changeOnlyContent"
             ></ratingselect>
             <div class="rating-wrapper">
               <ul v-show="food.ratings && food.ratings.length">
                 <li
-                  v-show="needShow(rating.rateType, rating.text)"
                   v-for="(rating, index) in food.ratings"
+                  v-show="needShow(rating.rateType, rating.text)"
                   :key="index"
                   class="rating-item border-1px"
                 >
@@ -80,6 +83,7 @@
   import cartcontrol from '../../components/cartcontrol/cartcontrol';
   import split from '../../components/split/split';
   import ratingselect from '../../components/ratingselect/ratingselect';
+  const ALL = 2;
   export default {
     name: 'food',
     props: {
@@ -90,6 +94,8 @@
     data () {
       return {
         showFlag: false,
+        selectType: ALL,
+        onlyContent: true,
         desc: {
           all: '全部',
           positive: '推荐',
@@ -100,8 +106,9 @@
     methods: {
       show () {
         this.showFlag = true;
+        this.selectType = ALL;
+        this.onlyContent = false;
         this.$nextTick(() => {
-          this.$refs.ratingselect.reload();
           if (!this.scroll) {
             this.scroll = new BScroll(this.$refs.food, {
               click: true
@@ -125,8 +132,21 @@
       cartAdd () {
         this.$emit('cart-add', event.target);
       },
+      changeType (type) {
+        this.selectType = type;
+      },
+      changeOnlyContent () {
+        this.onlyContent = !this.onlyContent;
+      },
       needShow (type, text) {
-        return true;
+        if (this.onlyContent && !text) {
+          return false;
+        }
+        if (this.selectType === 2) {
+          return true;
+        } else {
+          return type === this.selectType;
+        }
       }
     },
     components: {

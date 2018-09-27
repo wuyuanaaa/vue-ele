@@ -28,7 +28,6 @@
   const ALL = 2;
   const POSITIVE = 0;
   const NEGATIVE = 1;
-  const DEFAULT_ONLY_CONTENT = true;
   export default {
     name: 'ratingselect',
     props: {
@@ -36,6 +35,18 @@
         type: Array,
         default () {
           return [];
+        }
+      },
+      selectType: {
+        type: Number,
+        default () {
+          return ALL;
+        }
+      },
+      onlyContent: {
+        type: Boolean,
+        default () {
+          return true;
         }
       },
       desc: {
@@ -48,12 +59,6 @@
           };
         }
       }
-    },
-    data () {
-      return {
-        selectType: ALL,
-        onlyContent: DEFAULT_ONLY_CONTENT
-      };
     },
     computed: {
       positives () {
@@ -68,15 +73,11 @@
       }
     },
     methods: {
-      reload () {
-        this.selectType = ALL;
-        this.onlyContent = DEFAULT_ONLY_CONTENT;
-      },
       select (type) {
-        this.selectType = type;
+        this.$emit('changeType', type);
       },
       toggleContent () {
-        this.onlyContent = !this.onlyContent;
+        this.$emit('changeOnlyContent');
       }
     }
   };
