@@ -58,7 +58,7 @@
                     <span class="name">{{rating.username}}</span>
                     <img class="avatar" width="12" height="12" :src="rating.avatar">
                   </div>
-                  <div class="time">{{rating.rateTime}}</div>
+                  <div class="time">{{rating.rateTime | formatDate}}</div>
                   <p class="text">
                     <i
                       class="thumb"
@@ -80,6 +80,7 @@
 <script>
   import Vue from 'vue';
   import BScroll from 'better-scroll';
+  import {formatDate} from '../../common/js/data';
   import cartcontrol from '../../components/cartcontrol/cartcontrol';
   import split from '../../components/split/split';
   import ratingselect from '../../components/ratingselect/ratingselect';
@@ -147,6 +148,12 @@
         } else {
           return type === this.selectType;
         }
+      }
+    },
+    filters: {
+      formatDate (time) {
+        let date = new Date(time);
+        return formatDate(date, 'yyyy-MM-dd hh:mm');
       }
     },
     components: {
@@ -302,6 +309,10 @@
                 line-height: 16px
                 font-size: 12px
                 color: rgb(7,17,27)
+          .no-rating
+            padding: 16px 0
+            font-size: 12px
+            color: rgb(147,153,159)
   .move-enter, .move-leave-to
     transform translate3d(100%,0,0)
 </style>
