@@ -1,5 +1,5 @@
 <template>
-  <div class="ratings">
+  <div class="ratings" ref="ratings">
     <div class="ratings-content">
       <div class="overview">
         <div class="overview-left">
@@ -33,11 +33,39 @@
         @changeType="changeType"
         @changeOnlyContent="changeOnlyContent"
       ></ratingselect>
+      <div class="rating-wrapper" v-show="ratings && ratings.length">
+        <ul>
+          <li
+            v-for="(rating, index) in ratings"
+            :key="index"
+            class="rating-item border-1px"
+          >
+            <div class="avatar">
+              <img :src="rating.avatar" width="28" height="28" alt="">
+            </div>
+            <div class="content">
+              <div class="name">{{rating.username}}</div>
+              <div class="time">{{rating.rateTime | formatDate}}</div>
+              <div class="score">
+                <star :size="24" :score="rating.score"></star>
+                <span class="time" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
+              </div>
+              <p class="text">{{rating.text}}</p>
+              <div class="rate">
+                <i></i>
+                <span v-for="(recommend, index) in rating.recommend" :key="index">{{recommend}}</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import BScroll from 'better-scroll';
+  import {formatDate} from '../../common/js/data';
   import star from '../../components/star/star';
   import split from '../../components/split/split';
   import ratingselect from '../../components/ratingselect/ratingselect';
@@ -75,10 +103,21 @@
         this.onlyContent = !this.onlyContent;
       }
     },
+    filters: {
+      formatDate (time) {
+        let date = new Date(time);
+        return formatDate(date, 'yyyy-MM-dd hh:mm');
+      }
+    },
     created () {
       this.$http.get('/api/ratings').then(response => {
         if (response.body.errno === ERR_OK) {
           this.ratings = response.body.data;
+          this.$nextTick(() => {
+            this.scroll = new BScroll(this.$refs.ratings, {
+              click: true
+            });
+          });
         }
       });
     }
@@ -86,6 +125,7 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  @import "../../common/stylus/mixin.styl"
   .ratings
     position absolute
     top: 174px
@@ -152,4 +192,15 @@
             line-height: 18px
             font-size: 12px
             color: rgb(147, 153, 159)
+    .rating-wrapper
+      padding 0 18px
+      .rating-item
+        display flex
+        padding 18px 0
+        border-bottom-1px(rgba(7, 17, 27, 0.1))
+        .avatar
+          margin-right: 12px
+          flex: 0 0 28px
+        .content
+          flex 1
 </style>
