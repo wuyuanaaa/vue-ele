@@ -39,6 +39,7 @@
             v-for="(rating, index) in ratings"
             :key="index"
             class="rating-item border-1px"
+            v-show="needShow(rating.rateType, rating.text)"
           >
             <div class="avatar">
               <img :src="rating.avatar" width="28" height="28" alt="">
@@ -47,13 +48,13 @@
               <div class="name">{{rating.username}}</div>
               <div class="time">{{rating.rateTime | formatDate}}</div>
               <div class="score">
-                <star :size="24" :score="rating.score"></star>
-                <span class="time" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
+                <star class="star" :size="24" :score="rating.score"></star>
+                <span class="deliveryTime" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
               </div>
-              <p class="text">{{rating.text}}</p>
+              <p class="text" v-show="rating.text">{{rating.text}}</p>
               <div class="rate">
-                <i></i>
-                <span v-for="(recommend, index) in rating.recommend" :key="index">{{recommend}}</span>
+                <i class="rateType" :class="{'icon-thumb_up': rating.rateType===0, 'icon-thumb_down': rating.rateType===1}"></i>
+                <span class="recommend" v-for="(recommend, index) in rating.recommend" :key="index">{{recommend}}</span>
               </div>
             </div>
           </li>
@@ -101,6 +102,16 @@
       },
       changeOnlyContent () {
         this.onlyContent = !this.onlyContent;
+      },
+      needShow (type, text) {
+        if (this.onlyContent && !text) {
+          return false;
+        }
+        if (this.selectType === 2) {
+          return true;
+        } else {
+          return type === this.selectType;
+        }
       }
     },
     filters: {
@@ -195,12 +206,72 @@
     .rating-wrapper
       padding 0 18px
       .rating-item
+        position relative
         display flex
         padding 18px 0
         border-bottom-1px(rgba(7, 17, 27, 0.1))
         .avatar
           margin-right: 12px
           flex: 0 0 28px
+          &>img
+            border-radius 50%
         .content
           flex 1
+          .name
+            margin-bottom: 4px
+            line-height: 12px
+            font-size: 10px
+            color: rgb(7, 17, 27)
+          .time
+            position absolute
+            top: 18px
+            right: 0
+            line-height: 12px
+            font-size: 10px
+            color: rgb(147, 153, 159)
+          .score
+            margin-bottom: 6px
+            font-size: 0
+            .star
+              margin-right: 6px
+              display inline-block
+              vertical-align top
+            .deliveryTime
+              display inline-block
+              vertical-align top
+              font-size: 10px
+              line-height: 12px
+              color: rgb(147, 153, 159)
+          .text
+            margin-bottom: 8px
+            line-height: 18px
+            font-size: 12px
+            color: rgb(7, 17, 27)
+          .rate
+            font-size: 0
+            .rateType
+              display inline-block
+              vertical-align top
+              margin-right: 8px
+              line-height: 16px
+              font-size: 12px
+              &.icon-thumb_up
+                color: rgb(0, 160, 220)
+              &.icon-thumb_down
+                color: rgb(183, 187, 191)
+            .recommend
+              display inline-block
+              margin: 0 8px 4px 0
+              padding 0 6px
+              vertical-align top
+              line-height: 16px
+              height: 16px
+              max-width: 60px
+              overflow hidden
+              text-overflow ellipsis
+              white-space nowrap
+              border: 1px solid rgba(7, 17, 27, 0.1)
+              border-radius 2px
+              font-size: 9px
+              color: rgb(147, 153, 159)
 </style>
