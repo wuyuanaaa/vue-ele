@@ -194,9 +194,13 @@ export default {
       this.fold = !this.fold;
       if (!this.fold) {
         this.$nextTick(() => {
-          this.scroll = new BScroll(this.$refs.listContent, {
-            click: true
-          });
+          if (!this.scroll) {
+            this.scroll = new BScroll(this.$refs.listContent, {
+              click: true
+            });
+          } else {
+            this.scroll.refresh();
+          }
         });
       } else {
         this.scroll.refresh();
